@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found Cambodia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kantumruy+Pro:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Kantumruy Pro', sans-serif; }
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .item-card:hover { transform: translateY(-4px); transition: all 0.3s ease; }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <div id="app" class="max-w-4xl mx-auto px-4 pb-24">
+        
+        <!-- Navigation Header -->
+        <header class="sticky top-0 z-40 py-4 mb-6 glass-morphism rounded-b-2xl shadow-sm px-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-blue-600 text-white p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl leading-none">LostFound.kh</h1>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest">Phnom Penh Community</p>
+                </div>
+            </div>
+            <div id="user-status" class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full animate-pulse">
+                Connecting...
+            </div>
+        </header>
+
+        <!-- Search & Hero -->
+        <section class="mb-8">
+            <div class="bg-blue-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-3xl font-bold mb-2">Lost something?</h2>
+                    <p class="text-blue-100 mb-6">Reconnecting Phnom Penh one item at a time.</p>
+                    
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search items (e.g. 'iPhone', 'Tuol Kork', 'Cat')" 
+                               class="w-full py-4 pl-12 pr-4 rounded-2xl text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 absolute left-4 top-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
+                <!-- Abstract decorations -->
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500 rounded-full opacity-50"></div>
+                <div class="absolute -left-10 -top-10 w-24 h-24 bg-blue-400 rounded-full opacity-30"></div>
+            </div>
+        </section>
+
+        <!-- Category Filters -->
+        <div class="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
+            <button onclick="filterItems('all')" class="category-btn active bg-slate-900 text-white px-5 py-2 rounded-full whitespace-nowrap shadow-md">All Items</button>
+            <button onclick="filterItems('Phones')" class="category-btn bg-white text-slate-600 border border-slate-200 px-5 py-2 rounded-full whitespace-nowrap">📱 Phones</button>
+            <button onclick="filterItems('Pets')" class="category-btn bg-white text-slate-600 border border-slate-200 px-5 py-2 rounded-full whitespace-nowrap">🐾 Pets</button>
+            <button onclick="filterItems('Wallets')" class="category-btn bg-white text-slate-600 border border-slate-200 px-5 py-2 rounded-full whitespace-nowrap">👛 Wallets</button>
+            <button onclick="filterItems('Documents')" class="category-btn bg-white text-slate-600 border border-slate-200 px-5 py-2 rounded-full whitespace-nowrap">📄 IDs/Passes</button>
+            <button onclick="filterItems('Electronics')" class="category-btn bg-white text-slate-600 border border-slate-200 px-5 py-2 rounded-full whitespace-nowrap">🎧 Electronics</button>
+        </div>
+
+        <!-- Items Feed -->
+        <div id="items-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Loading Skeletons -->
+            <div class="animate-pulse bg-white p-4 rounded-2xl h-48 shadow-sm"></div>
+            <div class="animate-pulse bg-white p-4 rounded-2xl h-48 shadow-sm"></div>
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="fixed bottom-6 left-1/2 -translate-x-1/2 flex gap-4 z-50">
+            <button onclick="openModal('report-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full shadow-2xl font-bold flex items-center gap-2 transition-transform active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Report Lost / Found
+            </button>
+        </div>
+
+        <!-- Report Modal -->
+        <div id="report-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+            <div class="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+                <div class="p-6 border-b flex justify-between items-center">
+                    <h3 class="text-xl font-bold">New Report</h3>
+                    <button onclick="closeModal('report-modal')" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
+                </div>
+                <form id="report-form" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="block">
+                            <input type="radio" name="reportType" value="lost" checked class="hidden peer">
+                            <div class="p-3 text-center rounded-xl border-2 peer-checked:border-blue-600 peer-checked:bg-blue-50 cursor-pointer font-semibold transition-all">
+                                🔍 Lost Item
+                            </div>
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="reportType" value="found" class="hidden peer">
+                            <div class="p-3 text-center rounded-xl border-2 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 cursor-pointer font-semibold transition-all">
+                                🤝 Found Item
+                            </div>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">What did you lose/find?</label>
+                        <input type="text" id="title" required placeholder="e.g. Black iPhone 13, Golden Retriever" class="w-full p-3 bg-slate-100 rounded-xl focus:outline-blue-600">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Category</label>
+                            <select id="category" class="w-full p-3 bg-slate-100 rounded-xl focus:outline-blue-600">
+                                <option>Phones</option>
+                                <option>Pets</option>
+                                <option>Wallets</option>
+                                <option>Documents</option>
+                                <option>Electronics</option>
+                                <option>Others</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">District (Phnom Penh)</label>
+                            <select id="location" class="w-full p-3 bg-slate-100 rounded-xl focus:outline-blue-600">
+                                <option>Tuol Kork</option>
+                                <option>Daun Penh</option>
+                                <option>Chamkar Mon</option>
+                                <option>Prampi Makara</option>
+                                <option>Boeung Keng Kang</option>
+                                <option>Sen Sok</option>
+                                <option>Meanchey</option>
+                                <option>Chroy Changvar</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Details / Specific Location</label>
+                        <textarea id="description" rows="3" placeholder="Describe specific marks, nearby landmarks (e.g. Near TK Avenue)..." class="w-full p-3 bg-slate-100 rounded-xl focus:outline-blue-600"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Contact Info (Telegram / Phone)</label>
+                        <input type="text" id="contact" required placeholder="@username or 012 345 678" class="w-full p-3 bg-slate-100 rounded-xl focus:outline-blue-600">
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-colors">
+                        Submit Report
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Custom Notification Toast -->
+        <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-[200] transform -translate-y-20 transition-transform duration-300 pointer-events-none">
+            <div class="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3">
+                <span id="toast-msg">Success!</span>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, query, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Constants from environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'lost-found-kh-demo';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            // Placeholder for local testing if needed
+            apiKey: "demo-api-key",
+            authDomain: "demo-app.firebaseapp.com",
+            projectId: "demo-app",
+            storageBucket: "demo-app.appspot.com",
+            messagingSenderId: "12345",
+            appId: "1:12345:web:6789"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let allItems = [];
+        let currentFilter = 'all';
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth Error:", error);
+                showToast("Connection issue. Please refresh.");
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('user-status').innerHTML = `<span class='flex items-center gap-1'><span class='w-2 h-2 bg-emerald-500 rounded-full'></span> Online</span>`;
+                document.getElementById('user-status').classList.remove('animate-pulse');
+                fetchItems();
+            }
+        });
+
+        function fetchItems() {
+            // RULE 1: Strict paths
+            const itemsRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
+            
+            // RULE 2: No complex queries, fetch all and filter in JS
+            onSnapshot(itemsRef, (snapshot) => {
+                allItems = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                
+                renderItems();
+            }, (error) => {
+                console.error("Snapshot error:", error);
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+            
+            let filtered = allItems;
+
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(item => item.category === currentFilter);
+            }
+
+            if (searchVal) {
+                filtered = filtered.filter(item => 
+                    item.title.toLowerCase().includes(searchVal) || 
+                    item.description.toLowerCase().includes(searchVal) ||
+                    item.location.toLowerCase().includes(searchVal)
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400">
+                        <div class="text-5xl mb-4">🏜️</div>
+                        <p class="font-medium">No items found matching your search.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => `
+                <div class="item-card bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${item.reportType === 'lost' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">
+                                ${item.reportType === 'lost' ? 'Lost' : 'Found'}
+                            </span>
+                            <span class="text-[11px] text-slate-400">${formatDate(item.createdAt)}</span>
+                        </div>
+                        <h4 class="font-bold text-lg mb-1 leading-tight">${item.title}</h4>
+                        <div class="flex items-center gap-1 text-slate-500 text-sm mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            ${item.location}
+                        </div>
+                        <p class="text-slate-600 text-sm line-clamp-2 mb-4">${item.description}</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-50">
+                        <div class="text-xs text-slate-400">
+                            ID: ${item.id.slice(0,6)}...
+                        </div>
+                        <button onclick="contactUser('${item.contact}')" class="bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
+                            Contact
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('report-form').onsubmit = async (e) => {
+            e.preventDefault();
+            if (!currentUser) {
+                showToast("Please wait for connection...");
+                return;
+            }
+
+            const formData = {
+                reportType: e.target.reportType.value,
+                title: document.getElementById('title').value,
+                category: document.getElementById('category').value,
+                location: document.getElementById('location').value,
+                description: document.getElementById('description').value,
+                contact: document.getElementById('contact').value,
+                createdAt: serverTimestamp(),
+                userId: currentUser.uid
+            };
+
+            try {
+                // RULE 1: Strict paths
+                const itemsRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
+                await addDoc(itemsRef, formData);
+                
+                closeModal('report-modal');
+                e.target.reset();
+                showToast("Post created successfully! 🇰🇭");
+            } catch (err) {
+                console.error(err);
+                showToast("Error posting item.");
+            }
+        };
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = timestamp.toDate();
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        window.openModal = (id) => {
+            document.getElementById(id).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeModal = (id) => {
+            document.getElementById(id).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+
+        window.filterItems = (category) => {
+            currentFilter = category;
+            const btns = document.querySelectorAll('.category-btn');
+            btns.forEach(b => {
+                b.classList.remove('bg-slate-900', 'text-white', 'shadow-md');
+                b.classList.add('bg-white', 'text-slate-600');
+            });
+            event.target.classList.add('bg-slate-900', 'text-white', 'shadow-md');
+            event.target.classList.remove('bg-white', 'text-slate-600');
+            renderItems();
+        };
+
+        window.contactUser = (contact) => {
+            // Simple contact action: If it's a telegram handle, open telegram, else show message
+            if (contact.startsWith('@')) {
+                window.open(`https://t.me/${contact.substring(1)}`, '_blank');
+            } else {
+                showToast(`Contact: ${contact}`);
+            }
+        };
+
+        window.showToast = (msg) => {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('-translate-y-20');
+            setTimeout(() => {
+                toast.classList.add('-translate-y-20');
+            }, 3000);
+        };
+
+        document.getElementById('search-input').addEventListener('input', renderItems);
+
+        initAuth();
+
+    </script>
+</body>
+</html>

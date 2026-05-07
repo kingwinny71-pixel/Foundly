@@ -3,35 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LostFound.kh | Reconnecting Cambodia</title>
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6999553446379672"
-     crossorigin="anonymous"></script>
+    <title>LostFound.kh | Community Ledger</title>
     
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6999553446379672" crossorigin="anonymous"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kantumruy+Pro:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Kantumruy+Pro:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', 'Kantumruy Pro', sans-serif; }
-        .glass-morphism {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        body { 
+            font-family: 'Plus Jakarta Sans', 'Kantumruy Pro', sans-serif;
+            background-color: #f8fafc;
         }
-        .item-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .hero-gradient {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
         }
-        .item-card:hover {
-            transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        .kh-watermark {
+            position: absolute;
+            right: 10%;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 8rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            width: 250px;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .hero-gradient {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        .floating-btn {
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
         }
-        
+
         .skeleton {
             background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
             background-size: 200% 100%;
@@ -41,434 +55,361 @@
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
-
-        .floating-button {
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4), 0 4px 6px -2px rgba(37, 99, 235, 0.1);
-        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen">
+<body class="text-slate-900 min-h-screen">
 
-    <div id="app" class="max-w-5xl mx-auto px-4 pb-32">
-        
-        <nav class="sticky top-0 z-50 py-4 mb-4 glass-morphism rounded-b-3xl px-6 flex justify-between items-center shadow-sm">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-600 text-white p-2 rounded-xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="font-black text-lg tracking-tight leading-none text-slate-800">LostFound.kh</h1>
-                    <span class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Community Ledger</span>
-                </div>
+    <!-- Header / Navbar -->
+    <header class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 p-2 rounded-lg text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
             </div>
-            <div id="auth-status" class="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500">
-                <div class="w-2 h-2 rounded-full bg-slate-300"></div>
-                Initializing...
-            </div>
-        </nav>
-
-        <header class="mb-8 relative">
-            <div class="hero-gradient rounded-[2.5rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden">
-                <div class="relative z-10 grid md:grid-cols-2 items-center gap-10">
-                    <div>
-                        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold mb-6 border border-white/20">
-                            <span class="flex h-2 w-2 rounded-full bg-emerald-400"></span>
-                            320+ Items Recovered This Month
-                        </div>
-                        <h2 class="text-4xl md:text-5xl font-black mb-4 leading-tight">Bring it back <br>to the community.</h2>
-                        <p class="text-blue-100 text-lg mb-8 opacity-90 max-w-sm">The most trusted lost & found network for schools and neighborhoods in Phnom Penh.</p>
-                        
-                        <!-- Search Box inside Hero -->
-                        <div class="relative max-w-md group">
-                            <input type="text" id="search-input" placeholder="Search by item, school, or district..." 
-                                   class="w-full py-4 pl-12 pr-4 rounded-2xl text-slate-900 bg-white shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-400/30 transition-all">
-                            <div class="absolute left-4 top-4 text-slate-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="hidden md:flex justify-center">
-                        <div class="relative">
-                            <div class="w-64 h-64 bg-white/5 rounded-full border border-white/10 animate-pulse"></div>
-                            <div class="absolute inset-0 flex items-center justify-center text-8xl">🇰🇭</div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Background decor -->
-                <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-400 rounded-full blur-3xl opacity-20"></div>
-            </div>
-        </header>
-
-        <div class="mb-8">
-            <div class="flex items-center justify-between mb-4 px-2">
-                <h3 class="font-bold text-slate-400 text-xs uppercase tracking-widest">Browse Categories</h3>
-                <span id="result-count" class="text-xs font-bold text-blue-600">Loading items...</span>
-            </div>
-            <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
-                <button onclick="filterByCategory('all')" class="cat-btn active bg-slate-900 text-white px-6 py-3 rounded-2xl whitespace-nowrap font-bold text-sm shadow-lg shadow-slate-200 transition-all">All Community</button>
-                <button onclick="filterByCategory('Phones')" class="cat-btn bg-white text-slate-600 border border-slate-200 px-6 py-3 rounded-2xl whitespace-nowrap font-bold text-sm hover:border-blue-200 transition-all">📱 Phones</button>
-                <button onclick="filterByCategory('Pets')" class="cat-btn bg-white text-slate-600 border border-slate-200 px-6 py-3 rounded-2xl whitespace-nowrap font-bold text-sm hover:border-blue-200 transition-all">🐾 Pets</button>
-                <button onclick="filterByCategory('Wallets')" class="cat-btn bg-white text-slate-600 border border-slate-200 px-6 py-3 rounded-2xl whitespace-nowrap font-bold text-sm hover:border-blue-200 transition-all">👛 Wallets</button>
-                <button onclick="filterByCategory('Documents')" class="cat-btn bg-white text-slate-600 border border-slate-200 px-6 py-3 rounded-2xl whitespace-nowrap font-bold text-sm hover:border-blue-200 transition-all">📄 IDs/Docs</button>
-                <button onclick="filterByCategory('Bags')" class="cat-btn bg-white text-slate-600 border border-slate-200 px-6 py-3 rounded-2xl whitespace-nowrap font-bold text-sm hover:border-blue-200 transition-all">🎒 Bags</button>
+            <div>
+                <h1 class="font-extrabold text-lg leading-tight">LostFound.kh</h1>
+                <p class="text-[10px] uppercase tracking-widest text-blue-600 font-bold">Community Ledger</p>
             </div>
         </div>
-
-        <div id="items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Loading Skeletons -->
-            <div class="bg-white p-6 rounded-[2rem] h-64 shadow-sm border border-slate-100 flex flex-col gap-4">
-                <div class="flex justify-between"><div class="h-6 w-20 skeleton rounded-full"></div><div class="h-4 w-16 skeleton rounded"></div></div>
-                <div class="h-8 w-3/4 skeleton rounded"></div>
-                <div class="h-4 w-1/2 skeleton rounded"></div>
-                <div class="h-16 w-full skeleton rounded-xl mt-auto"></div>
-            </div>
-            <div class="bg-white p-6 rounded-[2rem] h-64 shadow-sm border border-slate-100 flex flex-col gap-4">
-                <div class="flex justify-between"><div class="h-6 w-20 skeleton rounded-full"></div><div class="h-4 w-16 skeleton rounded"></div></div>
-                <div class="h-8 w-3/4 skeleton rounded"></div>
-                <div class="h-4 w-1/2 skeleton rounded"></div>
-                <div class="h-16 w-full skeleton rounded-xl mt-auto"></div>
-            </div>
-            <div class="bg-white p-6 rounded-[2rem] h-64 shadow-sm border border-slate-100 flex flex-col gap-4">
-                <div class="flex justify-between"><div class="h-6 w-20 skeleton rounded-full"></div><div class="h-4 w-16 skeleton rounded"></div></div>
-                <div class="h-8 w-3/4 skeleton rounded"></div>
-                <div class="h-4 w-1/2 skeleton rounded"></div>
-                <div class="h-16 w-full skeleton rounded-xl mt-auto"></div>
-            </div>
+        <div class="flex items-center gap-2">
+            <div id="status-dot" class="w-2 h-2 rounded-full bg-slate-300"></div>
+            <span id="network-status" class="text-xs font-semibold text-slate-400">Offline Mode</span>
         </div>
+    </header>
 
-        <div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
-            <button onclick="openModal('report-modal')" class="bg-blue-600 text-white px-8 py-5 rounded-[2rem] font-black flex items-center gap-3 transition-all floating-button hover:bg-blue-700 hover:-translate-y-1 active:scale-95">
-                <span class="text-xl leading-none">＋</span>
-                Report Lost / Found
-            </button>
-        </div>
-
-        <div id="report-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4 hidden">
-            <div class="bg-white w-full max-w-lg rounded-[3rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-                <div class="p-8 pb-4 flex justify-between items-center">
-                    <div>
-                        <h3 class="text-2xl font-black text-slate-800">Create Report</h3>
-                        <p class="text-slate-400 text-sm">Fill in the details to help recovery.</p>
-                    </div>
-                    <button onclick="closeModal('report-modal')" class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                </div>
+    <!-- Hero Section -->
+    <section class="max-w-6xl mx-auto px-4 mt-2">
+        <div class="hero-gradient rounded-[2rem] p-8 md:p-16 relative overflow-hidden text-white min-h-[400px] flex flex-col justify-center">
+            <div class="kh-watermark hidden md:flex">KH</div>
+            
+            <div class="relative z-10 max-w-xl">
+                <span class="bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-xs font-bold mb-6 inline-block">
+                    ● Global Community Ledger Active
+                </span>
+                <h2 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
+                    Bring it back<br>to the community.
+                </h2>
+                <p class="text-blue-100 text-lg mb-8 font-medium">
+                    Post publicly to the shared feed so everyone in Phnom Penh can help find your items.
+                </p>
                 
-                <form id="report-form" class="p-8 pt-4 space-y-5 max-h-[70vh] overflow-y-auto no-scrollbar">
-                    <div class="grid grid-cols-2 gap-4">
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="reportType" value="lost" checked class="hidden peer">
-                            <div class="py-4 text-center rounded-3xl border-2 border-slate-100 peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all font-bold text-slate-600 peer-checked:text-amber-700">
-                                <span class="block text-xl mb-1">🔍</span> Lost
-                            </div>
-                        </label>
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="reportType" value="found" class="hidden peer">
-                            <div class="py-4 text-center rounded-3xl border-2 border-slate-100 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-all font-bold text-slate-600 peer-checked:text-emerald-700">
-                                <span class="block text-xl mb-1">🤝</span> Found
-                            </div>
-                        </label>
+                <div class="relative max-w-md">
+                    <input type="text" id="search-input" placeholder="Search by item, school, or district..." 
+                           class="w-full bg-white text-slate-900 py-4 pl-12 pr-4 rounded-2xl search-shadow border-none focus:ring-4 focus:ring-blue-400 transition-all font-medium">
+                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
                     </div>
-
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Item Title</label>
-                        <input type="text" id="title" required placeholder="e.g. Red Backpack with laptop" 
-                               class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:border-blue-500 focus:bg-white outline-none transition-all">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Category</label>
-                            <select id="category" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:border-blue-500 focus:bg-white outline-none appearance-none">
-                                <option>Phones</option>
-                                <option>Pets</option>
-                                <option>Wallets</option>
-                                <option>Documents</option>
-                                <option>Electronics</option>
-                                <option>Bags</option>
-                                <option>Others</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">District</label>
-                            <select id="location" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:border-blue-500 focus:bg-white outline-none appearance-none">
-                                <option>Daun Penh</option>
-                                <option>Chamkar Mon</option>
-                                <option>Boeung Keng Kang</option>
-                                <option>Tuol Kork</option>
-                                <option>Sen Sok</option>
-                                <option>Meanchey</option>
-                                <option>Chroy Changvar</option>
-                                <option>Russey Keo</option>
-                                <option>Sen Sok</option>
-                                <option>Others</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Description & Place</label>
-                        <textarea id="description" rows="2" placeholder="Where exactly? Special marks?" 
-                                  class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:border-blue-500 focus:bg-white outline-none"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Contact Info</label>
-                        <input type="text" id="contact" required placeholder="@telegram_user or Phone" 
-                               class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-100 focus:border-blue-500 focus:bg-white outline-none">
-                    </div>
-
-                    <button type="submit" id="submit-btn" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-black shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-3">
-                        Post to Live Feed
-                    </button>
-                </form>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Custom Notification Toast -->
-        <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] transform -translate-y-40 transition-transform duration-500 pointer-events-none">
-            <div class="bg-slate-900 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-4">
-                <span id="toast-msg" class="font-bold text-sm">Success!</span>
+    <!-- Categories Section -->
+    <section class="max-w-6xl mx-auto px-4 mt-12">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Browse Public Feed</h3>
+            <span class="text-xs font-bold text-blue-600" id="items-count">Syncing...</span>
+        </div>
+        
+        <div class="flex gap-3 overflow-x-auto no-scrollbar pb-4">
+            <button onclick="filterByCategory('all')" class="cat-btn bg-slate-900 text-white px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-slate-200">All Community</button>
+            <button onclick="filterByCategory('Phones')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">📱 Phones</button>
+            <button onclick="filterByCategory('Pets')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">🐾 Pets</button>
+            <button onclick="filterByCategory('Wallets')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">👛 Wallets</button>
+            <button onclick="filterByCategory('Documents')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">📄 IDs/Docs</button>
+            <button onclick="filterByCategory('Bags')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">🎒 Bags</button>
+        </div>
+    </section>
+
+    <!-- Feed Section -->
+    <section class="max-w-6xl mx-auto px-4 mt-8 pb-32">
+        <div id="items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Initial Skeletons -->
+            <div class="bg-white rounded-3xl p-6 space-y-4 border border-slate-50">
+                <div class="h-4 w-1/3 skeleton rounded"></div>
+                <div class="h-8 w-3/4 skeleton rounded"></div>
+                <div class="h-32 w-full skeleton rounded-2xl"></div>
             </div>
+            <div class="bg-white rounded-3xl p-6 space-y-4 border border-slate-50">
+                <div class="h-4 w-1/3 skeleton rounded"></div>
+                <div class="h-8 w-3/4 skeleton rounded"></div>
+                <div class="h-32 w-full skeleton rounded-2xl"></div>
+            </div>
+        </div>
+        
+        <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20 text-center">
+            <div class="bg-blue-50 p-6 rounded-full mb-4">🔍</div>
+            <h4 class="font-bold text-xl">No public posts yet</h4>
+            <p class="text-slate-400 max-w-xs mx-auto">Be the first to post an item in your community.</p>
+        </div>
+    </section>
+
+    <!-- Floating Action Button -->
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100]">
+        <button onclick="openModal('report-modal')" class="floating-btn bg-blue-600 text-white px-8 py-4 rounded-full font-extrabold text-sm flex items-center gap-3 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all">
+            <span class="text-xl">+</span> Report Lost / Found
+        </button>
+    </div>
+
+    <!-- Modals -->
+    <div id="report-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[200] flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 hero-gradient"></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-extrabold">Public Post</h3>
+                <button onclick="closeModal('report-modal')" class="text-slate-400 hover:text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            
+            <form id="report-form" class="space-y-4">
+                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-2 rounded-2xl">
+                    <label class="flex-1">
+                        <input type="radio" name="reportType" value="lost" checked class="hidden peer">
+                        <div class="text-center py-2 rounded-xl peer-checked:bg-white peer-checked:shadow-sm font-bold text-xs cursor-pointer transition-all">🔍 Lost</div>
+                    </label>
+                    <label class="flex-1">
+                        <input type="radio" name="reportType" value="found" class="hidden peer">
+                        <div class="text-center py-2 rounded-xl peer-checked:bg-white peer-checked:shadow-sm font-bold text-xs cursor-pointer transition-all">🤝 Found</div>
+                    </label>
+                </div>
+
+                <input type="text" id="title" required placeholder="What was lost/found? (e.g. iPhone 13)" 
+                       class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium">
+
+                <div class="grid grid-cols-2 gap-4">
+                    <select id="category" class="bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium appearance-none">
+                        <option value="Phones">Phones</option><option value="Pets">Pets</option><option value="Wallets">Wallets</option><option value="Documents">Documents</option><option value="Bags">Bags</option><option value="Others">Others</option>
+                    </select>
+                    <select id="location" class="bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium appearance-none">
+                        <option value="Daun Penh">Daun Penh</option><option value="BKK">BKK</option><option value="Sen Sok">Sen Sok</option><option value="Tuol Kork">Tuol Kork</option><option value="Meanchey">Meanchey</option>
+                    </select>
+                </div>
+
+                <textarea id="description" rows="3" required placeholder="Add details like color, area, or reward..." 
+                          class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium resize-none"></textarea>
+
+                <input type="text" id="contact" required placeholder="Telegram @username or Phone Number" 
+                       class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium">
+
+                <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-extrabold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 disabled:opacity-50">
+                    Post to Public Ledger
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed top-8 left-1/2 -translate-x-1/2 z-[300] transform -translate-y-40 transition-transform duration-500">
+        <div class="bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+            <span id="toast-msg" class="font-bold text-sm">Success!</span>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, query, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, serverTimestamp, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Constants
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'lost-found-kh-v1';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'foundly-global-ledger';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "demo-key",
-            authDomain: "demo.firebaseapp.com",
-            projectId: "demo-project",
-            storageBucket: "demo.appspot.com",
-            messagingSenderId: "123456",
-            appId: "1:123456:web:789"
+            apiKey: "demo", authDomain: "demo.firebaseapp.com", projectId: "demo-project"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let currentUser = null;
+        let user = null;
         let allItems = [];
         let activeCategory = 'all';
+        let unsubscribeFeed = null;
 
-        async function startAuth() {
+        const initAuth = async () => {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
-            } catch (err) {
-                console.error("Auth error:", err);
-                const statusEl = document.getElementById('auth-status');
-                statusEl.innerHTML = `<span class="w-2 h-2 bg-red-500 rounded-full"></span> Offline Mode`;
+            } catch (e) {
+                console.error("Auth error:", e);
+                showToast("Connection failure.");
             }
-        }
+        };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                const statusEl = document.getElementById('auth-status');
-                statusEl.innerHTML = `<span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Community`;
-                statusEl.classList.remove('bg-slate-100', 'text-slate-500');
-                statusEl.classList.add('bg-emerald-50', 'text-emerald-700');
-                subscribeToItems();
+        initAuth();
+
+        onAuthStateChanged(auth, u => {
+            user = u;
+            if (u) {
+                document.getElementById('status-dot').className = "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]";
+                document.getElementById('network-status').innerText = "Shared Feed Active";
+                document.getElementById('network-status').className = "text-xs font-bold text-emerald-600";
+                subscribeToPublicFeed();
             }
         });
 
-        function subscribeToItems() {
-            // RULE 1: Use specific path structure
-            const itemsRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
-            
-            // RULE 2: Keep queries simple
-            onSnapshot(itemsRef, (snapshot) => {
-                allItems = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                })).sort((a, b) => {
-                    const tA = a.createdAt?.seconds || 0;
-                    const tB = b.createdAt?.seconds || 0;
-                    return tB - tA;
+        function subscribeToPublicFeed() {
+            if (!user) return;
+            const publicCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
+            if (unsubscribeFeed) unsubscribeFeed();
+
+            unsubscribeFeed = onSnapshot(publicCollectionRef, (snap) => {
+                allItems = snap.docs.map(d => ({ 
+                    id: d.id, 
+                    ...d.data() 
+                })).sort((a,b) => {
+                    const timeA = a.createdAt?.seconds || 0;
+                    const timeB = b.createdAt?.seconds || 0;
+                    return timeB - timeA;
                 });
                 renderFeed();
-            }, (error) => {
-                console.error("Firestore error:", error);
+            }, (err) => {
+                console.error("Firestore error:", err);
+                showToast("Database permission denied.");
             });
         }
 
         function renderFeed() {
             const container = document.getElementById('items-container');
-            const resultCount = document.getElementById('result-count');
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const emptyState = document.getElementById('empty-state');
+            const search = document.getElementById('search-input').value.toLowerCase();
             
             let filtered = allItems;
-
             if (activeCategory !== 'all') {
-                filtered = filtered.filter(item => item.category === activeCategory);
+                filtered = filtered.filter(i => i.category === activeCategory);
             }
-
-            if (searchTerm) {
-                filtered = filtered.filter(item => 
-                    item.title.toLowerCase().includes(searchTerm) || 
-                    item.description.toLowerCase().includes(searchTerm) ||
-                    item.location.toLowerCase().includes(searchTerm)
+            if (search) {
+                filtered = filtered.filter(i => 
+                    (i.title?.toLowerCase().includes(search)) || 
+                    (i.location?.toLowerCase().includes(search)) ||
+                    (i.description?.toLowerCase().includes(search))
                 );
             }
 
-            resultCount.innerText = `${filtered.length} Items Listed`;
+            document.getElementById('items-count').innerText = `${filtered.length} Public Items Found`;
 
             if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
-                        <div class="text-7xl mb-4">🔦</div>
-                        <h3 class="text-xl font-black text-slate-800">Clear Feed</h3>
-                        <p class="text-slate-400 mt-2">Try adjusting your filters or search keywords.</p>
-                    </div>
-                `;
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
                 return;
             }
 
-            container.innerHTML = filtered.map(item => `
-                <div class="item-card bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100 flex flex-col h-full group">
-                    <div class="flex justify-between items-start mb-4">
-                        <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${item.reportType === 'lost' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">
-                            ${item.reportType === 'lost' ? 'Looking For' : 'Found At'}
+            emptyState.classList.add('hidden');
+            container.innerHTML = filtered.map(item => {
+                const isLost = item.reportType === 'lost';
+                return `
+                <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:shadow-blue-500/5 transition-all">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isLost ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'}">
+                            ${isLost ? 'Lost Item' : 'Found Item'}
                         </span>
-                        <span class="text-[10px] font-bold text-slate-300 uppercase">${formatTimestamp(item.createdAt)}</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${item.location || 'Cambodia'}</span>
                     </div>
-                    
-                    <h4 class="font-black text-xl mb-2 text-slate-800 group-hover:text-blue-600 transition-colors">${item.title}</h4>
-                    
-                    <div class="flex items-center gap-2 text-slate-400 text-xs font-bold mb-4">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
-                        ${item.location}
-                    </div>
-
-                    <p class="text-slate-500 text-sm mb-6 line-clamp-2 leading-relaxed flex-grow">
-                        ${item.description || 'No additional details provided.'}
+                    <h4 class="text-xl font-extrabold mb-2 line-clamp-1">${item.title || 'Untitled'}</h4>
+                    <p class="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed font-medium">
+                        ${item.description || 'No description provided.'}
                     </p>
-
-                    <div class="flex items-center gap-3 pt-4 border-t border-slate-50">
-                        <button onclick="handleContact('${item.contact}')" class="flex-grow bg-slate-50 hover:bg-blue-600 hover:text-white text-slate-800 px-6 py-3.5 rounded-2xl text-xs font-black transition-all">
-                            CONTACT PERSON
+                    <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Post ID</span>
+                            <span class="text-xs font-bold text-slate-900">${formatTime(item.createdAt)}</span>
+                        </div>
+                        <button onclick="handleContact('${(item.contact || '').replace(/'/g, "\\'")}')" 
+                                class="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:scale-105 active:scale-95 transition-all">
+                            Message
                         </button>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         document.getElementById('report-form').onsubmit = async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            
-            if (!currentUser) {
-                showToast("Still connecting... Please wait.");
+            if (!user) {
+                showToast("Please wait for connection...");
                 return;
             }
 
+            const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.innerHTML = `<span class="animate-spin text-xl">⏳</span> Publishing...`;
-
-            const data = {
-                reportType: e.target.reportType.value,
-                title: document.getElementById('title').value,
-                category: document.getElementById('category').value,
-                location: document.getElementById('location').value,
-                description: document.getElementById('description').value,
-                contact: document.getElementById('contact').value,
-                createdAt: serverTimestamp(),
-                userId: currentUser.uid
-            };
+            btn.innerText = "Syncing with Public Ledger...";
 
             try {
-                const itemsRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
-                await addDoc(itemsRef, data);
+                const publicCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
+                await addDoc(publicCollectionRef, {
+                    reportType: e.target.reportType.value,
+                    title: document.getElementById('title').value,
+                    category: document.getElementById('category').value,
+                    location: document.getElementById('location').value,
+                    description: document.getElementById('description').value,
+                    contact: document.getElementById('contact').value,
+                    createdAt: serverTimestamp(),
+                    userId: user.uid
+                });
+
                 closeModal('report-modal');
                 e.target.reset();
-                showToast("Post Live! 🇰🇭 Community notified.");
+                showToast("Post Live on Public Feed!");
             } catch (err) {
-                console.error(err);
-                showToast("Error! Check connection.");
+                console.error("Save error:", err);
+                showToast("Failed to save. Try again.");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `Post to Live Feed`;
+                btn.innerText = "Submit Report";
             }
         };
 
-        // Utility: Date formatting
-        function formatTimestamp(ts) {
+        function formatTime(ts) {
             if (!ts) return 'Just now';
             try {
-                const date = ts.toDate();
-                const now = new Date();
-                const diff = (now - date) / 1000;
+                const diff = (Date.now() - ts.toDate()) / 1000;
                 if (diff < 60) return 'Just now';
-                if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
-                if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
-                return date.toLocaleDateString('en-KH', { month: 'short', day: 'numeric' });
-            } catch { return 'Recent'; }
+                if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+                if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+                return ts.toDate().toLocaleDateString();
+            } catch(e) { return 'Recent'; }
         }
 
-        // Global Event Handlers
-        window.openModal = (id) => {
-            document.getElementById(id).classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        };
-
-        window.closeModal = (id) => {
-            document.getElementById(id).classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        };
-
+        window.openModal = id => { document.getElementById(id).classList.remove('hidden'); document.body.style.overflow='hidden'; };
+        window.closeModal = id => { document.getElementById(id).classList.add('hidden'); document.body.style.overflow='auto'; };
+        
         window.filterByCategory = (cat) => {
             activeCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('bg-slate-900', 'text-white', 'shadow-lg');
-                b.classList.add('bg-white', 'text-slate-600');
+                b.className = "cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2";
             });
-            event.currentTarget.classList.add('bg-slate-900', 'text-white', 'shadow-lg');
-            event.currentTarget.classList.remove('bg-white', 'text-slate-600');
+            event.currentTarget.className = "cat-btn bg-slate-900 text-white px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-slate-200";
             renderFeed();
         };
 
-        window.handleContact = (contact) => {
-            if (contact.startsWith('@')) {
-                window.open(`https://t.me/${contact.substring(1)}`, '_blank');
-            } else {
-                const temp = document.createElement('textarea');
-                temp.value = contact;
+        window.handleContact = c => {
+            if (!c) return;
+            if (c.startsWith('@')) {
+                window.open(`https://t.me/${c.substring(1)}`, '_blank');
+            } else { 
+                const temp = document.createElement('input');
+                temp.value = c;
                 document.body.appendChild(temp);
                 temp.select();
                 document.execCommand('copy');
                 document.body.removeChild(temp);
-                showToast(`Copied contact: ${contact}`);
+                showToast("Contact copied to clipboard!"); 
             }
         };
 
-        window.showToast = (msg) => {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            toast.classList.remove('-translate-y-40');
-            setTimeout(() => toast.classList.add('-translate-y-40'), 3000);
+        window.showToast = m => {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = m;
+            t.classList.remove('-translate-y-40');
+            setTimeout(() => t.classList.add('-translate-y-40'), 3000);
         };
 
         document.getElementById('search-input').addEventListener('input', renderFeed);
-
-        // Start the app
-        startAuth();
-
     </script>
 </body>
 </html>

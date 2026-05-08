@@ -3,413 +3,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LostFound.kh | Community Ledger</title>
-    
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6999553446379672" crossorigin="anonymous"></script>
-
+    <title>FindKH - Recovery Network</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Kantumruy+Pro:wght@300;400;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        body { 
-            font-family: 'Plus Jakarta Sans', 'Kantumruy Pro', sans-serif;
-            background-color: #f8fafc;
-        }
-        .hero-gradient {
-            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-        }
-        .kh-watermark {
-            position: absolute;
-            right: 10%;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 8rem;
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.1);
-            pointer-events: none;
-            border: 2px solid rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            width: 250px;
-            height: 250px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .search-shadow {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
         
-        .floating-btn {
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
-        }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        
+        .category-pill { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .category-pill.active { background: #1d4ed8; color: white; border-color: #1d4ed8; box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2); }
+        
+        .item-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .item-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
 
-        .skeleton {
-            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
-<body class="text-slate-900 min-h-screen">
+<body class="bg-[#f8fafc] text-slate-900">
 
-    <!-- Header / Navbar -->
-    <header class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <div class="bg-blue-600 p-2 rounded-lg text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+    <!-- Auth Guard -->
+    <div id="authOverlay" class="fixed inset-0 z-[100] bg-white flex items-center justify-center p-6">
+        <div class="max-w-md w-full text-center space-y-8">
+            <div class="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-2xl mx-auto rotate-3">
+                <i class="ph-fill ph-magnifying-glass text-4xl"></i>
             </div>
             <div>
-                <h1 class="font-extrabold text-lg leading-tight">LostFound.kh</h1>
-                <p class="text-[10px] uppercase tracking-widest text-blue-600 font-bold">Community Ledger</p>
+                <h1 class="text-4xl font-black tracking-tight text-slate-900 mb-2">FindKH</h1>
+                <p class="text-slate-500 font-medium leading-relaxed">Phnom Penh's Community Recovery Network. Help neighbors find what's lost.</p>
             </div>
+            <button onclick="window.signIn()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-xl">
+                Enter Community
+            </button>
         </div>
-        <div class="flex items-center gap-2">
-            <div id="status-dot" class="w-2 h-2 rounded-full bg-slate-300"></div>
-            <span id="network-status" class="text-xs font-semibold text-slate-400">Offline Mode</span>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="max-w-6xl mx-auto px-4 mt-2">
-        <div class="hero-gradient rounded-[2rem] p-8 md:p-16 relative overflow-hidden text-white min-h-[400px] flex flex-col justify-center">
-            <div class="kh-watermark hidden md:flex">KH</div>
-            
-            <div class="relative z-10 max-w-xl">
-                <span class="bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-xs font-bold mb-6 inline-block">
-                    ● Global Community Ledger Active
-                </span>
-                <h2 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
-                    Bring it back<br>to the community.
-                </h2>
-                <p class="text-blue-100 text-lg mb-8 font-medium">
-                    Post publicly to the shared feed so everyone in Phnom Penh can help find your items.
-                </p>
-                
-                <div class="relative max-w-md">
-                    <input type="text" id="search-input" placeholder="Search by item, school, or district..." 
-                           class="w-full bg-white text-slate-900 py-4 pl-12 pr-4 rounded-2xl search-shadow border-none focus:ring-4 focus:ring-blue-400 transition-all font-medium">
-                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Categories Section -->
-    <section class="max-w-6xl mx-auto px-4 mt-12">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Browse Public Feed</h3>
-            <span class="text-xs font-bold text-blue-600" id="items-count">Syncing...</span>
-        </div>
-        
-        <div class="flex gap-3 overflow-x-auto no-scrollbar pb-4">
-            <button onclick="filterByCategory('all')" class="cat-btn bg-slate-900 text-white px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-slate-200">All Community</button>
-            <button onclick="filterByCategory('Phones')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">📱 Phones</button>
-            <button onclick="filterByCategory('Pets')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">🐾 Pets</button>
-            <button onclick="filterByCategory('Wallets')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">👛 Wallets</button>
-            <button onclick="filterByCategory('Documents')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">📄 IDs/Docs</button>
-            <button onclick="filterByCategory('Bags')" class="cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2">🎒 Bags</button>
-        </div>
-    </section>
-
-    <!-- Feed Section -->
-    <section class="max-w-6xl mx-auto px-4 mt-8 pb-32">
-        <div id="items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Initial Skeletons -->
-            <div class="bg-white rounded-3xl p-6 space-y-4 border border-slate-50">
-                <div class="h-4 w-1/3 skeleton rounded"></div>
-                <div class="h-8 w-3/4 skeleton rounded"></div>
-                <div class="h-32 w-full skeleton rounded-2xl"></div>
-            </div>
-            <div class="bg-white rounded-3xl p-6 space-y-4 border border-slate-50">
-                <div class="h-4 w-1/3 skeleton rounded"></div>
-                <div class="h-8 w-3/4 skeleton rounded"></div>
-                <div class="h-32 w-full skeleton rounded-2xl"></div>
-            </div>
-        </div>
-        
-        <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20 text-center">
-            <div class="bg-blue-50 p-6 rounded-full mb-4">🔍</div>
-            <h4 class="font-bold text-xl">No public posts yet</h4>
-            <p class="text-slate-400 max-w-xs mx-auto">Be the first to post an item in your community.</p>
-        </div>
-    </section>
-
-    <!-- Floating Action Button -->
-    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100]">
-        <button onclick="openModal('report-modal')" class="floating-btn bg-blue-600 text-white px-8 py-4 rounded-full font-extrabold text-sm flex items-center gap-3 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all">
-            <span class="text-xl">+</span> Report Lost / Found
-        </button>
     </div>
 
-    <!-- Modals -->
-    <div id="report-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[200] flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 hero-gradient"></div>
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-extrabold">Public Post</h3>
-                <button onclick="closeModal('report-modal')" class="text-slate-400 hover:text-slate-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-nav px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="location.reload()">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                    <i class="ph-bold ph-magnifying-glass"></i>
+                </div>
+                <span class="text-xl font-black tracking-tighter">FindKH</span>
             </div>
-            
-            <form id="report-form" class="space-y-4">
-                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-2 rounded-2xl">
-                    <label class="flex-1">
-                        <input type="radio" name="reportType" value="lost" checked class="hidden peer">
-                        <div class="text-center py-2 rounded-xl peer-checked:bg-white peer-checked:shadow-sm font-bold text-xs cursor-pointer transition-all">🔍 Lost</div>
-                    </label>
-                    <label class="flex-1">
-                        <input type="radio" name="reportType" value="found" class="hidden peer">
-                        <div class="text-center py-2 rounded-xl peer-checked:bg-white peer-checked:shadow-sm font-bold text-xs cursor-pointer transition-all">🤝 Found</div>
-                    </label>
-                </div>
-
-                <input type="text" id="title" required placeholder="What was lost/found? (e.g. iPhone 13)" 
-                       class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium">
-
-                <div class="grid grid-cols-2 gap-4">
-                    <select id="category" class="bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium appearance-none">
-                        <option value="Phones">Phones</option><option value="Pets">Pets</option><option value="Wallets">Wallets</option><option value="Documents">Documents</option><option value="Bags">Bags</option><option value="Others">Others</option>
-                    </select>
-                    <select id="location" class="bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium appearance-none">
-                        <option value="Daun Penh">Daun Penh</option><option value="BKK">BKK</option><option value="Sen Sok">Sen Sok</option><option value="Tuol Kork">Tuol Kork</option><option value="Meanchey">Meanchey</option>
-                    </select>
-                </div>
-
-                <textarea id="description" rows="3" required placeholder="Add details like color, area, or reward..." 
-                          class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium resize-none"></textarea>
-
-                <input type="text" id="contact" required placeholder="Telegram @username or Phone Number" 
-                       class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-400 font-medium">
-
-                <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-extrabold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 disabled:opacity-50">
-                    Post to Public Ledger
+            <div class="flex items-center gap-4">
+                <button onclick="window.openModal('reportModal')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center gap-2">
+                    <i class="ph-bold ph-plus"></i> Report Item
                 </button>
+                <div id="userProfile" class="flex items-center gap-2 bg-slate-100 p-1 rounded-full pr-3 border border-slate-200">
+                    <img id="avatar" class="w-7 h-7 rounded-full bg-white" src="">
+                    <span id="username" class="text-[10px] font-black uppercase text-slate-500 tracking-wider">User</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-24 pb-12 px-6 max-w-7xl mx-auto">
+        <!-- Hero & Filter -->
+        <header class="mb-12 space-y-8">
+            <div class="max-w-2xl">
+                <h2 class="text-5xl font-black tracking-tight text-slate-900 mb-4">Discover & Recover.</h2>
+                <p class="text-slate-500 font-medium text-lg leading-relaxed">Search through items found across the city or report something you've lost to the community.</p>
+            </div>
+
+            <!-- Category Bar -->
+            <div class="flex items-center gap-3 overflow-x-auto pb-4 hide-scrollbar">
+                <button onclick="window.setCategory('All')" id="cat-All" class="category-pill active whitespace-nowrap px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest border border-slate-200 bg-white hover:bg-slate-50">
+                    All Items
+                </button>
+                <div id="categoryContainer" class="flex gap-3">
+                    <!-- JS Injected -->
+                </div>
+            </div>
+
+            <!-- Search & District -->
+            <div class="flex flex-col md:flex-row gap-4 bg-white p-3 rounded-[2rem] border border-slate-100 shadow-sm">
+                <div class="flex-1 relative">
+                    <i class="ph ph-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input id="searchInput" oninput="window.renderItems()" type="text" placeholder="Search by name, color, or description..." class="w-full pl-14 pr-6 py-4 bg-slate-50 rounded-2xl outline-none font-semibold text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
+                </div>
+                <select id="districtFilter" onchange="window.renderItems()" class="md:w-64 px-6 py-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm text-slate-600 appearance-none cursor-pointer">
+                    <option value="All">All Districts</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Content Grid -->
+        <div id="itemsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Items injected here -->
+        </div>
+
+        <div id="emptyState" class="hidden py-32 text-center space-y-4">
+            <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-300">
+                <i class="ph ph-ghost text-4xl"></i>
+            </div>
+            <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">No items match your search</p>
+        </div>
+    </main>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="fixed inset-0 z-[110] hidden bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden animate-in">
+            <div class="p-8 border-b flex justify-between items-center">
+                <h3 class="text-2xl font-black text-slate-900">New Report</h3>
+                <button onclick="window.closeModal('reportModal')" class="w-10 h-10 hover:bg-slate-100 rounded-full flex items-center justify-center transition-colors"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <form id="reportForm" class="p-8 space-y-6">
+                <div class="flex bg-slate-100 p-1 rounded-2xl gap-1">
+                    <button type="button" id="typeLost" onclick="window.setReportType('Lost')" class="flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest bg-blue-600 text-white shadow-lg">Lost</button>
+                    <button type="button" id="typeFound" onclick="window.setReportType('Found')" class="flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-400">Found</button>
+                </div>
+                <div class="space-y-4">
+                    <input required id="itemTitle" type="text" placeholder="Item name (e.g. Blue Wallet)" class="w-full px-5 py-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm focus:ring-2 focus:ring-blue-100">
+                    <div class="grid grid-cols-2 gap-4">
+                        <select id="modalCategory" class="px-5 py-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm"></select>
+                        <select id="modalDistrict" class="px-5 py-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm"></select>
+                    </div>
+                    <textarea id="itemDesc" placeholder="Brief description (color, location, etc.)" class="w-full px-5 py-4 bg-slate-50 rounded-2xl outline-none font-medium text-sm h-32"></textarea>
+                </div>
+                <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-blue-700 transition-all">Submit to Network</button>
             </form>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed top-8 left-1/2 -translate-x-1/2 z-[300] transform -translate-y-40 transition-transform duration-500">
-        <div class="bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
-            <span id="toast-msg" class="font-bold text-sm">Success!</span>
+    <!-- Chat Modal -->
+    <div id="chatModal" class="fixed inset-0 z-[120] hidden bg-slate-900/20 backdrop-blur-sm flex items-end md:items-center justify-center md:p-4">
+        <div class="bg-white w-full max-w-xl h-[80vh] md:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-in">
+            <div class="p-6 border-b flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600"><i class="ph-bold ph-chat-circle"></i></div>
+                    <span id="chatTargetName" class="font-black text-slate-800">Messages</span>
+                </div>
+                <button onclick="window.closeModal('chatModal')" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-50"><i class="ph ph-x"></i></button>
+            </div>
+            <div id="chatMessages" class="flex-1 p-6 overflow-y-auto space-y-4"></div>
+            <form id="chatForm" class="p-4 border-t bg-slate-50 flex gap-3">
+                <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 px-5 py-3 rounded-xl outline-none bg-white border border-slate-200">
+                <button type="submit" class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg"><i class="ph-bold ph-paper-plane"></i></button>
+            </form>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, serverTimestamp, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'foundly-global-ledger';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "demo", authDomain: "demo.firebaseapp.com", projectId: "demo-project"
-        };
-
+        const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'findkh-production';
+
+        const CATEGORIES = [
+            { name: 'Phones', icon: 'ph-phone' },
+            { name: 'Wallets', icon: 'ph-wallet' },
+            { name: 'Pets', icon: 'ph-dog' },
+            { name: 'IDs', icon: 'ph-identification-card' },
+            { name: 'Keys', icon: 'ph-key' },
+            { name: 'Bags', icon: 'ph-bag' },
+            { name: 'Other', icon: 'ph-package' }
+        ];
+
+        const DISTRICTS = ['Daun Penh', 'Tuol Kork', 'BKK 1', 'Sen Sok', '7 Makara', 'Chamkarmon', 'Meanchey', 'Chroy Changvar'];
 
         let user = null;
-        let allItems = [];
-        let activeCategory = 'all';
-        let unsubscribeFeed = null;
+        let items = [];
+        let filterCategory = 'All';
+        let reportType = 'Lost';
+        let activeChatId = null;
 
-        const initAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (e) {
-                console.error("Auth error:", e);
-                showToast("Connection failure.");
+        // Auth Flow
+        window.signIn = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
             }
         };
 
-        initAuth();
-
-        onAuthStateChanged(auth, u => {
+        onAuthStateChanged(auth, (u) => {
             user = u;
             if (u) {
-                document.getElementById('status-dot').className = "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]";
-                document.getElementById('network-status').innerText = "Shared Feed Active";
-                document.getElementById('network-status').className = "text-xs font-bold text-emerald-600";
-                subscribeToPublicFeed();
+                document.getElementById('authOverlay').classList.add('hidden');
+                document.getElementById('username').innerText = u.uid.slice(0, 5);
+                document.getElementById('avatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${u.uid}`;
+                initData();
             }
         });
 
-        function subscribeToPublicFeed() {
-            if (!user) return;
-            const publicCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
-            if (unsubscribeFeed) unsubscribeFeed();
+        // UI Helpers
+        window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
 
-            unsubscribeFeed = onSnapshot(publicCollectionRef, (snap) => {
-                allItems = snap.docs.map(d => ({ 
-                    id: d.id, 
-                    ...d.data() 
-                })).sort((a,b) => {
-                    const timeA = a.createdAt?.seconds || 0;
-                    const timeB = b.createdAt?.seconds || 0;
-                    return timeB - timeA;
-                });
-                renderFeed();
-            }, (err) => {
-                console.error("Firestore error:", err);
-                showToast("Database permission denied.");
+        window.setReportType = (type) => {
+            reportType = type;
+            const l = document.getElementById('typeLost'), f = document.getElementById('typeFound');
+            const active = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest bg-blue-600 text-white shadow-lg";
+            const inactive = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-400";
+            l.className = type === 'Lost' ? active : inactive;
+            f.className = type === 'Found' ? active : inactive;
+        };
+
+        window.setCategory = (cat) => {
+            filterCategory = cat;
+            document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+            document.getElementById(`cat-${cat.replace(/\s/g, '')}`).classList.add('active');
+            window.renderItems();
+        };
+
+        // Data Management
+        function initData() {
+            // Setup Dropdowns
+            const dF = document.getElementById('districtFilter');
+            const mD = document.getElementById('modalDistrict');
+            const mC = document.getElementById('modalCategory');
+            const cC = document.getElementById('categoryContainer');
+
+            DISTRICTS.forEach(d => {
+                const opt = `<option value="${d}">${d}</option>`;
+                dF.insertAdjacentHTML('beforeend', opt);
+                mD.insertAdjacentHTML('beforeend', opt);
+            });
+
+            CATEGORIES.forEach(c => {
+                mC.insertAdjacentHTML('beforeend', `<option value="${c.name}">${c.name}</option>`);
+                cC.insertAdjacentHTML('beforeend', `
+                    <button onclick="window.setCategory('${c.name}')" id="cat-${c.name.replace(/\s/g, '')}" class="category-pill whitespace-nowrap px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest border border-slate-200 bg-white hover:bg-slate-50 flex items-center gap-2">
+                        <i class="${c.icon} text-lg"></i> ${c.name}
+                    </button>
+                `);
+            });
+
+            // Listen for Items
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'items'), (snap) => {
+                items = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                window.renderItems();
             });
         }
 
-        function renderFeed() {
-            const container = document.getElementById('items-container');
-            const emptyState = document.getElementById('empty-state');
-            const search = document.getElementById('search-input').value.toLowerCase();
+        window.renderItems = () => {
+            const grid = document.getElementById('itemsGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const district = document.getElementById('districtFilter').value;
             
-            let filtered = allItems;
-            if (activeCategory !== 'all') {
-                filtered = filtered.filter(i => i.category === activeCategory);
-            }
-            if (search) {
-                filtered = filtered.filter(i => 
-                    (i.title?.toLowerCase().includes(search)) || 
-                    (i.location?.toLowerCase().includes(search)) ||
-                    (i.description?.toLowerCase().includes(search))
-                );
-            }
-
-            document.getElementById('items-count').innerText = `${filtered.length} Public Items Found`;
-
-            if (filtered.length === 0) {
-                container.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-
-            emptyState.classList.add('hidden');
-            container.innerHTML = filtered.map(item => {
-                const isLost = item.reportType === 'lost';
-                return `
-                <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:shadow-blue-500/5 transition-all">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isLost ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'}">
-                            ${isLost ? 'Lost Item' : 'Found Item'}
-                        </span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${item.location || 'Cambodia'}</span>
-                    </div>
-                    <h4 class="text-xl font-extrabold mb-2 line-clamp-1">${item.title || 'Untitled'}</h4>
-                    <p class="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed font-medium">
-                        ${item.description || 'No description provided.'}
-                    </p>
-                    <div class="flex items-center justify-between pt-6 border-t border-slate-50">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Post ID</span>
-                            <span class="text-xs font-bold text-slate-900">${formatTime(item.createdAt)}</span>
-                        </div>
-                        <button onclick="handleContact('${(item.contact || '').replace(/'/g, "\\'")}')" 
-                                class="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:scale-105 active:scale-95 transition-all">
-                            Message
-                        </button>
-                    </div>
-                </div>
-            `}).join('');
-        }
-
-        document.getElementById('report-form').onsubmit = async (e) => {
-            e.preventDefault();
-            if (!user) {
-                showToast("Please wait for connection...");
-                return;
-            }
-
-            const btn = document.getElementById('submit-btn');
-            btn.disabled = true;
-            btn.innerText = "Syncing with Public Ledger...";
-
-            try {
-                const publicCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
-                await addDoc(publicCollectionRef, {
-                    reportType: e.target.reportType.value,
-                    title: document.getElementById('title').value,
-                    category: document.getElementById('category').value,
-                    location: document.getElementById('location').value,
-                    description: document.getElementById('description').value,
-                    contact: document.getElementById('contact').value,
-                    createdAt: serverTimestamp(),
-                    userId: user.uid
-                });
-
-                closeModal('report-modal');
-                e.target.reset();
-                showToast("Post Live on Public Feed!");
-            } catch (err) {
-                console.error("Save error:", err);
-                showToast("Failed to save. Try again.");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Submit Report";
-            }
-        };
-
-        function formatTime(ts) {
-            if (!ts) return 'Just now';
-            try {
-                const diff = (Date.now() - ts.toDate()) / 1000;
-                if (diff < 60) return 'Just now';
-                if (diff < 3600) return Math.floor(diff/60) + 'm ago';
-                if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
-                return ts.toDate().toLocaleDateString();
-            } catch(e) { return 'Recent'; }
-        }
-
-        window.openModal = id => { document.getElementById(id).classList.remove('hidden'); document.body.style.overflow='hidden'; };
-        window.closeModal = id => { document.getElementById(id).classList.add('hidden'); document.body.style.overflow='auto'; };
-        
-        window.filterByCategory = (cat) => {
-            activeCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn bg-white border border-slate-100 px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm text-slate-600 transition-all flex items-center gap-2";
+            const filtered = items.filter(i => {
+                const matchesSearch = (i.title + i.description).toLowerCase().includes(search);
+                const matchesDistrict = district === 'All' || i.district === district;
+                const matchesCategory = filterCategory === 'All' || i.category === filterCategory;
+                return matchesSearch && matchesDistrict && matchesCategory;
             });
-            event.currentTarget.className = "cat-btn bg-slate-900 text-white px-6 py-3 rounded-xl whitespace-nowrap font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-slate-200";
-            renderFeed();
+
+            document.getElementById('emptyState').classList.toggle('hidden', filtered.length > 0);
+            
+            grid.innerHTML = filtered.map(i => {
+                const catIcon = CATEGORIES.find(c => c.name === i.category)?.icon || 'ph-package';
+                return `
+                    <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 item-card flex flex-col group animate-in">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
+                                <i class="${catIcon} text-2xl"></i>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${i.type === 'Lost' ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-500'}">
+                                ${i.type}
+                            </span>
+                        </div>
+                        <h4 class="text-lg font-black text-slate-800 mb-2 line-clamp-1">${i.title}</h4>
+                        <p class="text-slate-500 text-sm font-medium mb-6 line-clamp-2">${i.description || 'No description provided.'}</p>
+                        <div class="mt-auto flex items-center justify-between pt-6 border-t border-slate-50">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${i.district}</span>
+                            ${i.userId !== user.uid ? `
+                                <button onclick="window.openChat('${i.userId}', '${i.title}')" class="text-blue-600 font-black text-xs uppercase tracking-widest hover:text-blue-800">Contact</button>
+                            ` : `<span class="text-[10px] font-black text-slate-300 uppercase italic">Your post</span>`}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         };
 
-        window.handleContact = c => {
-            if (!c) return;
-            if (c.startsWith('@')) {
-                window.open(`https://t.me/${c.substring(1)}`, '_blank');
-            } else { 
-                const temp = document.createElement('input');
-                temp.value = c;
-                document.body.appendChild(temp);
-                temp.select();
-                document.execCommand('copy');
-                document.body.removeChild(temp);
-                showToast("Contact copied to clipboard!"); 
-            }
+        // Post Report
+        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true; btn.innerText = 'Syncing...';
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'items'), {
+                    type: reportType,
+                    title: document.getElementById('itemTitle').value,
+                    category: document.getElementById('modalCategory').value,
+                    district: document.getElementById('modalDistrict').value,
+                    description: document.getElementById('itemDesc').value,
+                    userId: user.uid,
+                    createdAt: serverTimestamp()
+                });
+                window.closeModal('reportModal');
+                e.target.reset();
+            } catch (err) { console.error(err); }
+            finally { btn.disabled = false; btn.innerText = 'Submit to Network'; }
+        });
+
+        // Messaging
+        window.openChat = (targetId, title) => {
+            const chatId = [user.uid, targetId].sort().join('_');
+            activeChatId = chatId;
+            document.getElementById('chatTargetName').innerText = title;
+            window.openModal('chatModal');
+            
+            const q = collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages');
+            onSnapshot(q, (snap) => {
+                if (activeChatId !== chatId) return;
+                const msgs = snap.docs.map(d => d.data()).sort((a,b) => (a.time?.seconds || 0) - (b.time?.seconds || 0));
+                const container = document.getElementById('chatMessages');
+                container.innerHTML = msgs.map(m => `
+                    <div class="flex ${m.from === user.uid ? 'justify-end' : 'justify-start'}">
+                        <div class="max-w-[80%] px-5 py-3 rounded-2xl text-sm font-semibold ${m.from === user.uid ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-800'}">
+                            ${m.text}
+                        </div>
+                    </div>
+                `).join('');
+                container.scrollTop = container.scrollHeight;
+            });
         };
 
-        window.showToast = m => {
-            const t = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = m;
-            t.classList.remove('-translate-y-40');
-            setTimeout(() => t.classList.add('-translate-y-40'), 3000);
-        };
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            if (!input.value.trim() || !activeChatId) return;
+            const text = input.value; input.value = '';
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', activeChatId, 'messages'), {
+                text, from: user.uid, time: serverTimestamp()
+            });
+        });
 
-        document.getElementById('search-input').addEventListener('input', renderFeed);
     </script>
 </body>
 </html>

@@ -23,111 +23,141 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        
+        .blur-content { filter: blur(8px); pointer-events: none; user-select: none; }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-900">
 
-    <!-- Auth Guard -->
-    <div id="authOverlay" class="fixed inset-0 z-[100] bg-white flex items-center justify-center p-6">
-        <div class="max-w-md w-full text-center space-y-8">
-            <div class="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-2xl mx-auto rotate-3">
-                <i class="ph-fill ph-magnifying-glass text-4xl"></i>
+    <!-- Authentication Overlay (The Login/Sign-in Screen) -->
+    <div id="authOverlay" class="fixed inset-0 z-[200] bg-white flex items-center justify-center p-6 transition-opacity duration-500">
+        <div class="max-w-md w-full text-center space-y-8 animate-in">
+            <div class="w-24 h-24 bg-blue-600 rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl mx-auto rotate-6">
+                <i class="ph-fill ph-user-circle-plus text-5xl"></i>
             </div>
-            <div>
-                <h1 class="text-4xl font-black tracking-tight text-slate-900 mb-2">FindKH</h1>
-                <p class="text-slate-500 font-medium leading-relaxed">Phnom Penh's Community Recovery Network. Help neighbors find what's lost.</p>
+            <div class="space-y-2">
+                <h1 class="text-4xl font-black tracking-tight text-slate-900">Join the Network</h1>
+                <p class="text-slate-500 font-medium leading-relaxed">Please connect your account to browse, report lost items, or contact finders in Phnom Penh.</p>
             </div>
-            <button onclick="window.signIn()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-xl">
-                Enter Community
-            </button>
+            
+            <div class="space-y-3">
+                <button onclick="window.signIn()" id="loginBtn" class="group relative w-full bg-slate-900 text-white py-5 rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-xl flex items-center justify-center gap-3">
+                    <span id="loginText">Connect with Guest Profile</span>
+                    <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Secure & Anonymous Access</p>
+            </div>
+
+            <div class="pt-8 grid grid-cols-3 gap-4 opacity-40">
+                <div class="h-px bg-slate-200 self-center"></div>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">FindKH Trusted</span>
+                <div class="h-px bg-slate-200 self-center"></div>
+            </div>
         </div>
     </div>
 
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass-nav px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="location.reload()">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                    <i class="ph-bold ph-magnifying-glass"></i>
+    <!-- Main App Wrapper (Initially Blurred) -->
+    <div id="appContent" class="blur-content transition-all duration-700">
+        <!-- Navigation -->
+        <nav class="fixed top-0 left-0 right-0 z-50 glass-nav px-6 py-4">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="location.reload()">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                        <i class="ph-bold ph-magnifying-glass"></i>
+                    </div>
+                    <span class="text-xl font-black tracking-tighter">FindKH</span>
                 </div>
-                <span class="text-xl font-black tracking-tighter">FindKH</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <button onclick="window.openModal('reportModal')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center gap-2">
-                    <i class="ph-bold ph-plus"></i> Report Item
-                </button>
-                <div id="userProfile" class="flex items-center gap-2 bg-slate-100 p-1 rounded-full pr-3 border border-slate-200">
-                    <img id="avatar" class="w-7 h-7 rounded-full bg-white" src="">
-                    <span id="username" class="text-[10px] font-black uppercase text-slate-500 tracking-wider">User</span>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <main class="pt-24 pb-12 px-6 max-w-7xl mx-auto">
-        <!-- Hero & Filter -->
-        <header class="mb-12 space-y-8">
-            <div class="max-w-2xl">
-                <h2 class="text-5xl font-black tracking-tight text-slate-900 mb-4">Discover & Recover.</h2>
-                <p class="text-slate-500 font-medium text-lg leading-relaxed">Search through items found across the city or report something you've lost to the community.</p>
-            </div>
-
-            <!-- Category Bar -->
-            <div class="flex items-center gap-3 overflow-x-auto pb-4 hide-scrollbar">
-                <button onclick="window.setCategory('All')" id="cat-All" class="category-pill active whitespace-nowrap px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest border border-slate-200 bg-white hover:bg-slate-50">
-                    All Items
-                </button>
-                <div id="categoryContainer" class="flex gap-3">
-                    <!-- JS Injected -->
+                <div class="flex items-center gap-4">
+                    <button onclick="window.openModal('reportModal')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center gap-2">
+                        <i class="ph-bold ph-plus"></i> Report Item
+                    </button>
+                    <div id="userProfile" class="flex items-center gap-2 bg-slate-100 p-1 rounded-full pr-4 border border-slate-200">
+                        <img id="avatar" class="w-8 h-8 rounded-full bg-white border border-slate-200" src="">
+                        <div class="flex flex-col">
+                            <span class="text-[8px] font-black text-blue-600 uppercase tracking-tighter">Active Dev</span>
+                            <span id="username" class="text-[11px] font-black text-slate-700 leading-none">User</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </nav>
 
-            <!-- Search & District -->
-            <div class="flex flex-col md:flex-row gap-4 bg-white p-3 rounded-[2rem] border border-slate-100 shadow-sm">
-                <div class="flex-1 relative">
-                    <i class="ph ph-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input id="searchInput" oninput="window.renderItems()" type="text" placeholder="Search by name, color, or description..." class="w-full pl-14 pr-6 py-4 bg-slate-50 rounded-2xl outline-none font-semibold text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
+        <main class="pt-24 pb-12 px-6 max-w-7xl mx-auto">
+            <!-- Hero & Filter -->
+            <header class="mb-12 space-y-8">
+                <div class="max-w-2xl">
+                    <h2 class="text-5xl font-black tracking-tight text-slate-900 mb-4">Search & Recover.</h2>
+                    <p class="text-slate-500 font-medium text-lg leading-relaxed">The community network is now live. Search for your belongings or post a new discovery below.</p>
                 </div>
-                <select id="districtFilter" onchange="window.renderItems()" class="md:w-64 px-6 py-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm text-slate-600 appearance-none cursor-pointer">
-                    <option value="All">All Districts</option>
-                </select>
-            </div>
-        </header>
 
-        <!-- Content Grid -->
-        <div id="itemsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Items injected here -->
-        </div>
+                <!-- Category Bar -->
+                <div class="flex items-center gap-3 overflow-x-auto pb-4 hide-scrollbar">
+                    <button onclick="window.setCategory('All')" id="cat-All" class="category-pill active whitespace-nowrap px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest border border-slate-200 bg-white hover:bg-slate-50">
+                        All Items
+                    </button>
+                    <div id="categoryContainer" class="flex gap-3"></div>
+                </div>
 
-        <div id="emptyState" class="hidden py-32 text-center space-y-4">
-            <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-300">
-                <i class="ph ph-ghost text-4xl"></i>
+                <!-- Search & District -->
+                <div class="flex flex-col md:flex-row gap-4 bg-white p-3 rounded-[2rem] border border-slate-100 shadow-sm">
+                    <div class="flex-1 relative">
+                        <i class="ph ph-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input id="searchInput" oninput="window.renderItems()" type="text" placeholder="Search by name, color, or description..." class="w-full pl-14 pr-6 py-4 bg-slate-50 rounded-2xl outline-none font-semibold text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
+                    </div>
+                    <select id="districtFilter" onchange="window.renderItems()" class="md:w-64 px-6 py-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm text-slate-600 appearance-none cursor-pointer">
+                        <option value="All">All Districts</option>
+                    </select>
+                </div>
+            </header>
+
+            <!-- Content Grid -->
+            <div id="itemsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+
+            <div id="emptyState" class="hidden py-32 text-center space-y-4">
+                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-300">
+                    <i class="ph ph-ghost text-4xl"></i>
+                </div>
+                <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">No reports found in this area</p>
             </div>
-            <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">No items match your search</p>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <!-- Report Modal -->
     <div id="reportModal" class="fixed inset-0 z-[110] hidden bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden animate-in">
-            <div class="p-8 border-b flex justify-between items-center">
-                <h3 class="text-2xl font-black text-slate-900">New Report</h3>
-                <button onclick="window.closeModal('reportModal')" class="w-10 h-10 hover:bg-slate-100 rounded-full flex items-center justify-center transition-colors"><i class="ph ph-x text-xl"></i></button>
+            <div class="p-8 border-b flex justify-between items-center bg-slate-50/50">
+                <div>
+                    <h3 class="text-2xl font-black text-slate-900">Post Report</h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Visible to all community members</p>
+                </div>
+                <button onclick="window.closeModal('reportModal')" class="w-10 h-10 hover:bg-slate-200 rounded-full flex items-center justify-center transition-colors"><i class="ph ph-x text-xl"></i></button>
             </div>
             <form id="reportForm" class="p-8 space-y-6">
-                <div class="flex bg-slate-100 p-1 rounded-2xl gap-1">
-                    <button type="button" id="typeLost" onclick="window.setReportType('Lost')" class="flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest bg-blue-600 text-white shadow-lg">Lost</button>
-                    <button type="button" id="typeFound" onclick="window.setReportType('Found')" class="flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-400">Found</button>
+                <div class="flex bg-slate-100 p-1.5 rounded-2xl gap-1">
+                    <button type="button" id="typeLost" onclick="window.setReportType('Lost')" class="flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest bg-blue-600 text-white shadow-lg transition-all">Lost</button>
+                    <button type="button" id="typeFound" onclick="window.setReportType('Found')" class="flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-400 transition-all">Found</button>
                 </div>
                 <div class="space-y-4">
-                    <input required id="itemTitle" type="text" placeholder="Item name (e.g. Blue Wallet)" class="w-full px-5 py-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm focus:ring-2 focus:ring-blue-100">
-                    <div class="grid grid-cols-2 gap-4">
-                        <select id="modalCategory" class="px-5 py-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm"></select>
-                        <select id="modalDistrict" class="px-5 py-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm"></select>
+                    <div class="group">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Item Name</label>
+                        <input required id="itemTitle" type="text" placeholder="e.g. Silver Laptop" class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all">
                     </div>
-                    <textarea id="itemDesc" placeholder="Brief description (color, location, etc.)" class="w-full px-5 py-4 bg-slate-50 rounded-2xl outline-none font-medium text-sm h-32"></textarea>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Category</label>
+                            <select id="modalCategory" class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm"></select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">District</label>
+                            <select id="modalDistrict" class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm"></select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Details</label>
+                        <textarea id="itemDesc" placeholder="Describe unique features, specific location, or contact info..." class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-medium text-sm h-32 focus:bg-white transition-all"></textarea>
+                    </div>
                 </div>
-                <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-blue-700 transition-all">Submit to Network</button>
+                <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-blue-700 transition-all active:scale-95">Post to Network</button>
             </form>
         </div>
     </div>
@@ -135,17 +165,20 @@
     <!-- Chat Modal -->
     <div id="chatModal" class="fixed inset-0 z-[120] hidden bg-slate-900/20 backdrop-blur-sm flex items-end md:items-center justify-center md:p-4">
         <div class="bg-white w-full max-w-xl h-[80vh] md:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-in">
-            <div class="p-6 border-b flex items-center justify-between">
+            <div class="p-6 border-b flex items-center justify-between bg-white">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600"><i class="ph-bold ph-chat-circle"></i></div>
-                    <span id="chatTargetName" class="font-black text-slate-800">Messages</span>
+                    <div>
+                        <span id="chatTargetName" class="font-black text-slate-800 block leading-tight">Messages</span>
+                        <span class="text-[9px] font-bold text-emerald-500 uppercase">Live Connection</span>
+                    </div>
                 </div>
                 <button onclick="window.closeModal('chatModal')" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-50"><i class="ph ph-x"></i></button>
             </div>
-            <div id="chatMessages" class="flex-1 p-6 overflow-y-auto space-y-4"></div>
-            <form id="chatForm" class="p-4 border-t bg-slate-50 flex gap-3">
-                <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 px-5 py-3 rounded-xl outline-none bg-white border border-slate-200">
-                <button type="submit" class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg"><i class="ph-bold ph-paper-plane"></i></button>
+            <div id="chatMessages" class="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50/30"></div>
+            <form id="chatForm" class="p-4 border-t bg-white flex gap-3">
+                <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 px-5 py-4 rounded-2xl outline-none bg-slate-50 border border-slate-100 focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all">
+                <button type="submit" class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-90"><i class="ph-bold ph-paper-plane-tilt text-xl"></i></button>
             </form>
         </div>
     </div>
@@ -171,7 +204,7 @@
             { name: 'Other', icon: 'ph-package' }
         ];
 
-        const DISTRICTS = ['Daun Penh', 'Tuol Kork', 'BKK 1', 'Sen Sok', '7 Makara', 'Chamkarmon', 'Meanchey', 'Chroy Changvar'];
+        const DISTRICTS = ['Daun Penh', 'Tuol Kork', 'BKK 1', 'Sen Sok', '7 Makara', 'Chamkarmon', 'Meanchey', 'Chroy Changvar', 'Dangkor', 'Prampi Makara'];
 
         let user = null;
         let items = [];
@@ -179,22 +212,41 @@
         let reportType = 'Lost';
         let activeChatId = null;
 
-        // Auth Flow
+        // AUTHENTICATION LOGIC
         window.signIn = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
+            const btnText = document.getElementById('loginText');
+            btnText.innerText = "Connecting...";
+            
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Auth failed", err);
+                btnText.innerText = "Try Again";
             }
         };
 
         onAuthStateChanged(auth, (u) => {
             user = u;
             if (u) {
-                document.getElementById('authOverlay').classList.add('hidden');
-                document.getElementById('username').innerText = u.uid.slice(0, 5);
-                document.getElementById('avatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${u.uid}`;
+                // Remove Blur and Auth Screen
+                document.getElementById('authOverlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('authOverlay').classList.add('hidden');
+                    document.getElementById('appContent').classList.remove('blur-content');
+                }, 500);
+
+                // Setup User Profile
+                document.getElementById('username').innerText = u.uid.slice(0, 8);
+                document.getElementById('avatar').src = `https://api.dicebear.com/7.x/bottts/svg?seed=${u.uid}`;
                 initData();
+            } else {
+                // Ensure everything is hidden if logged out
+                document.getElementById('authOverlay').classList.remove('hidden');
+                document.getElementById('appContent').classList.add('blur-content');
             }
         });
 
@@ -205,8 +257,8 @@
         window.setReportType = (type) => {
             reportType = type;
             const l = document.getElementById('typeLost'), f = document.getElementById('typeFound');
-            const active = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest bg-blue-600 text-white shadow-lg";
-            const inactive = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-400";
+            const active = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest bg-blue-600 text-white shadow-lg transition-all";
+            const inactive = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-400 transition-all";
             l.className = type === 'Lost' ? active : inactive;
             f.className = type === 'Found' ? active : inactive;
         };
@@ -220,11 +272,18 @@
 
         // Data Management
         function initData() {
-            // Setup Dropdowns
+            if(!user) return;
+
             const dF = document.getElementById('districtFilter');
             const mD = document.getElementById('modalDistrict');
             const mC = document.getElementById('modalCategory');
             const cC = document.getElementById('categoryContainer');
+
+            // Reset lists to avoid duplicates on re-auth
+            dF.innerHTML = '<option value="All">All Districts</option>';
+            mD.innerHTML = '';
+            mC.innerHTML = '';
+            cC.innerHTML = '';
 
             DISTRICTS.forEach(d => {
                 const opt = `<option value="${d}">${d}</option>`;
@@ -241,12 +300,12 @@
                 `);
             });
 
-            // Listen for Items
+            // Sync Items
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'items'), (snap) => {
                 items = snap.docs.map(d => ({ id: d.id, ...d.data() }))
                     .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 window.renderItems();
-            });
+            }, (err) => console.error("Firestore access denied. Login required."));
         }
 
         window.renderItems = () => {
@@ -265,23 +324,30 @@
             
             grid.innerHTML = filtered.map(i => {
                 const catIcon = CATEGORIES.find(c => c.name === i.category)?.icon || 'ph-package';
+                const isOwner = i.userId === user.uid;
                 return `
                     <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 item-card flex flex-col group animate-in">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
                                 <i class="${catIcon} text-2xl"></i>
                             </div>
-                            <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${i.type === 'Lost' ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-500'}">
-                                ${i.type}
-                            </span>
+                            <div class="flex flex-col items-end">
+                                <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${i.type === 'Lost' ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-500'}">
+                                    ${i.type}
+                                </span>
+                                <span class="text-[8px] text-slate-300 font-bold mt-1 uppercase">${new Date(i.createdAt?.seconds * 1000).toLocaleDateString() || 'Recent'}</span>
+                            </div>
                         </div>
                         <h4 class="text-lg font-black text-slate-800 mb-2 line-clamp-1">${i.title}</h4>
-                        <p class="text-slate-500 text-sm font-medium mb-6 line-clamp-2">${i.description || 'No description provided.'}</p>
+                        <p class="text-slate-500 text-sm font-medium mb-6 line-clamp-2">${i.description || 'No detailed description.'}</p>
                         <div class="mt-auto flex items-center justify-between pt-6 border-t border-slate-50">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${i.district}</span>
-                            ${i.userId !== user.uid ? `
-                                <button onclick="window.openChat('${i.userId}', '${i.title}')" class="text-blue-600 font-black text-xs uppercase tracking-widest hover:text-blue-800">Contact</button>
-                            ` : `<span class="text-[10px] font-black text-slate-300 uppercase italic">Your post</span>`}
+                            <div class="flex flex-col">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${i.district}</span>
+                                <span class="text-[8px] font-black text-blue-500/50 uppercase tracking-tight">ID: ${i.userId?.slice(0,6)}</span>
+                            </div>
+                            ${!isOwner ? `
+                                <button onclick="window.openChat('${i.userId}', '${i.title}')" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-sm">Contact</button>
+                            ` : `<span class="px-4 py-2 rounded-xl bg-slate-50 text-slate-300 font-black text-[10px] uppercase tracking-widest italic border border-dashed border-slate-200">Your Post</span>`}
                         </div>
                     </div>
                 `;
@@ -291,8 +357,9 @@
         // Post Report
         document.getElementById('reportForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if(!user) return;
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = 'Syncing...';
+            btn.disabled = true; btn.innerText = 'Synchronizing...';
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'items'), {
@@ -306,12 +373,17 @@
                 });
                 window.closeModal('reportModal');
                 e.target.reset();
-            } catch (err) { console.error(err); }
-            finally { btn.disabled = false; btn.innerText = 'Submit to Network'; }
+            } catch (err) { 
+                console.error("Submission failed", err);
+                alert("Connection lost. Please refresh.");
+            } finally { 
+                btn.disabled = false; btn.innerText = 'Post to Network'; 
+            }
         });
 
         // Messaging
         window.openChat = (targetId, title) => {
+            if(!user) return;
             const chatId = [user.uid, targetId].sort().join('_');
             activeChatId = chatId;
             document.getElementById('chatTargetName').innerText = title;
@@ -323,24 +395,27 @@
                 const msgs = snap.docs.map(d => d.data()).sort((a,b) => (a.time?.seconds || 0) - (b.time?.seconds || 0));
                 const container = document.getElementById('chatMessages');
                 container.innerHTML = msgs.map(m => `
-                    <div class="flex ${m.from === user.uid ? 'justify-end' : 'justify-start'}">
-                        <div class="max-w-[80%] px-5 py-3 rounded-2xl text-sm font-semibold ${m.from === user.uid ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-800'}">
+                    <div class="flex ${m.from === user.uid ? 'justify-end' : 'justify-start'} animate-in">
+                        <div class="max-w-[80%] px-5 py-3 rounded-2xl text-sm font-semibold shadow-sm ${m.from === user.uid ? 'bg-blue-600 text-white' : 'bg-white border border-slate-100 text-slate-800'}">
                             ${m.text}
+                            <div class="text-[8px] mt-1 opacity-50 ${m.from === user.uid ? 'text-white' : 'text-slate-400'}">${m.time ? new Date(m.time.seconds*1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...'}</div>
                         </div>
                     </div>
                 `).join('');
                 container.scrollTop = container.scrollHeight;
-            });
+            }, (err) => console.error("Chat sync failed"));
         };
 
         document.getElementById('chatForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const input = document.getElementById('chatInput');
-            if (!input.value.trim() || !activeChatId) return;
+            if (!input.value.trim() || !activeChatId || !user) return;
             const text = input.value; input.value = '';
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', activeChatId, 'messages'), {
-                text, from: user.uid, time: serverTimestamp()
-            });
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', activeChatId, 'messages'), {
+                    text, from: user.uid, time: serverTimestamp()
+                });
+            } catch(e) { console.error("Message send failed"); }
         });
 
     </script>
